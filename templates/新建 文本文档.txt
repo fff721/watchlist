@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- 电影总数：过滤器length统计数据库记录条数 -->
+    <p>{{ movies|length }} Titles</p>
+
+    <!-- 电影列表容器 -->
+    <div class="movie-list">
+        {% for movie in movies %}
+            <div class="movie-item">
+                <span>{{ movie.title }} - {{ movie.year }}</span>
+                <!-- IMDb跳转链接 -->
+                <a href="https://www.imdb.com/find?q={{ movie.title }}" class="imdb-btn">IMDb</a>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
