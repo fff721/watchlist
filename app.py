@@ -1,25 +1,25 @@
-from flask import Flask, url_for
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
-# 首页路由
 @app.route('/')
-def hello():
-    return 'Hello'
+def index():
+    # 讲义里的虚拟数据
+    name = 'Grey Li'
+    movies = [
+        {'title': 'My Neighbor Totoro', 'year': '1988'},
+        {'title': 'Dead Poets Society', 'year': '1989'},
+        {'title': 'A Perfect World', 'year': '1993'},
+        {'title': 'Leon', 'year': '1994'},
+        {'title': 'Mojhong', 'year': '1996'},
+        {'title': 'Swallowtail Butterfly', 'year': '1996'},
+        {'title': 'King of Comedy', 'year': '1999'},
+        {'title': 'Devils on the Doorstep', 'year': '1999'},
+        {'title': 'WALL-E', 'year': '2008'},
+        {'title': 'The Pork of Music', 'year': '2012'},
+    ]
+    # render_template(模板文件名, 传给模板的变量)
+    return render_template('index.html', name=name, movies=movies)
 
-# 带动态变量的用户路由 <name> 为动态参数
-@app.route('/user/<name>')
-def user_page(name):
-    return 'User: %s' % name
-
-# 用于测试url_for反向生成URL
-@app.route('/test')
-def test_url_for():
-    # 根据视图函数名生成对应URL
-    print(url_for('hello'))
-    print(url_for('user_page', name='greyli'))
-    print(url_for('user_page', name='peter'))
-    print(url_for('test_url_for'))
-    # 多余参数会拼接成查询字符串 ?num=2
-    print(url_for('test_url_for', num=2))
-    return 'Test page'
+if __name__ == '__main__':
+    app.run(debug=True)
