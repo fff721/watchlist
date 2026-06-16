@@ -1,18 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="utf-8">
     <title>{{ name }}'s Watchlist</title>
+    <!-- 网站标签小图标 -->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h2>{{ name }}'s Watchlist</h2>
+    <h2>
+        <!-- 标题头像 -->
+        <img alt="Avatar" class="avatar" src="{{ url_for('static', filename='images/avatar.png') }}">
+        {{ name }}'s Watchlist
+    </h2>
+
     {# length过滤器获取列表长度 #}
     <p>{{ movies|length }} Titles</p>
-    <ul>
+
+    <ul class="movie-list">
         {% for movie in movies %}
-            <li>{{ movie.title }} - {{ movie.year }}</li>
+        <li>{{ movie.title }} - {{ movie.year }}</li>
         {% endfor %}
     </ul>
+
+    <!-- 底部龙猫图 -->
+    <img alt="walking Totoro" class="totoro" src="{{ url_for('static', filename='images/totoro.gif') }}">
+
     <footer>
         <small>&copy; 2018 <a href="http://helloflask.com/tutorial">HelloFlask</a></small>
     </footer>
