@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ user.name }}'s Watchlist</title>
+    <!-- 引入外部样式，页面所有布局、黄色按钮依赖此行 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- 顶部头像+用户名 -->
+    <header>
+        <img class="avatar" src="{{ url_for('static', filename='images/avatar.png') }}" alt="头像">
+        <h2>{{ user.name }}'s Watchlist</h2>
+    </header>
+    <!-- 黑色Home导航栏 -->
+    <nav>
+        <a href="/">Home</a>
+    </nav>
+    <!-- 内容区域 -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <!-- 底部龙猫图片 -->
+    <footer>
+        <img class="totoro" src="{{ url_for('static', filename='images/totoro.gif') }}" alt="龙猫">
+        <small>© 2018 HelloFlask</small>
+    </footer>
+</body>
+</html>

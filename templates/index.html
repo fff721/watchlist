@@ -1,36 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>{{ name }}'s Watchlist</title>
-    <!-- 1. 引入浏览器标签图标 favicon -->
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <!-- 2. 引入全局CSS样式表 -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
-</head>
-<body>
-    <!-- 标题 + 头像：绑定avatar样式类 -->
-    <h2>
-        <img class="avatar" alt="Avatar" src="{{ url_for('static', filename='images/avatar.png') }}">
-        {{ name }}'s Watchlist
-    </h2>
+{% extends 'base.html' %}
 
-    <!-- 电影数量统计 -->
-    <p>{{ movies|length }} Titles</p>
-
-    <!-- 电影列表：绑定movie-list样式类 -->
-    <ul class="movie-list">
-        {% for movie in movies %}
-        <li>{{ movie.title }} - {{ movie.year }}</li>
-        {% endfor %}
-    </ul>
-
-    <!-- 底部动图：绑定totoro样式类 -->
-    <img class="totoro" alt="Walking Totoro" src="{{ url_for('static', filename='images/totoro.gif') }}">
-
-    <!-- 页脚 -->
-    <footer>
-        <small>&copy; 2018 <a href="http://helloflask.com/tutorial">HelloFlask</a></small>
-    </footer>
-</body>
-</html>
+{% block content %}
+<p>{{ movies|length }} Titles</p>
+<ul class="movie-list">
+    {% for movie in movies %}
+    <li>
+        {{ movie.title }} - {{ movie.year }}
+        <span class="float-right">
+            <!-- class="imdb" 匹配css黄色按钮 -->
+            <a class="imdb" target="_blank" href="https://www.imdb.com/find?q={{ movie.title }}">IMDb</a>
+        </span>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
