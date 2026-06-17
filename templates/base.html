@@ -2,28 +2,79 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ user.name }}'s Watchlist</title>
-    <!-- 引入外部样式，页面所有布局、黄色按钮依赖此行 -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Grey Li's Watchlist</title>
+    <style>
+        body { 
+            width: 720px; 
+            margin: 30px auto; 
+            font-family: Helvetica, sans-serif; 
+        }
+        nav { 
+            background: #111; 
+            padding: 10px 10px; 
+            margin: 12px 0; 
+        }
+        nav a { 
+            color: #fff; 
+            text-decoration: none; 
+            font-size: 15px;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin:12px 0; 
+            border:1px solid #aaa;
+        }
+        td { 
+            padding: 9px 12px; 
+            border: 1px solid #ddd; 
+            font-size:14px;
+        }
+        .btn { 
+            padding: 2px 7px; 
+            border:1px solid #222; 
+            background:#fff; 
+            cursor:pointer;
+            font-size:13px;
+        }
+        .imdb-btn { 
+            background: #f6c317; 
+            border:none; 
+            font-weight:bold; 
+            color:#000;
+        }
+        footer { 
+            text-align:center; 
+            margin-top:35px; 
+            font-size:11px; 
+            color:#555; 
+        }
+        .totoro { 
+            text-align:center; 
+            margin:25px 0; 
+        }
+        input[type="text"]{
+            padding:2px 4px;
+            border:1px solid #999;
+        }
+    </style>
 </head>
 <body>
-    <!-- 顶部头像+用户名 -->
-    <header>
-        <img class="avatar" src="{{ url_for('static', filename='images/avatar.png') }}" alt="头像">
-        <h2>{{ user.name }}'s Watchlist</h2>
-    </header>
-    <!-- 黑色Home导航栏 -->
+    <!-- 修正小猫头像路径：static/images/avatar.png -->
+    <h2>
+        <img src="{{ url_for('static', filename='images/avatar.png') }}" width="30"> 
+        Grey Li's Watchlist
+    </h2>
     <nav>
-        <a href="/">Home</a>
+        <a href="{{ url_for('index') }}">Home</a>
     </nav>
-    <!-- 内容区域 -->
-    <main>
-        {% block content %}{% endblock %}
-    </main>
-    <!-- 底部龙猫图片 -->
-    <footer>
-        <img class="totoro" src="{{ url_for('static', filename='images/totoro.gif') }}" alt="龙猫">
-        <small>© 2018 HelloFlask</small>
-    </footer>
+
+    {% block content %}{% endblock %}
+
+    <!-- 修正龙猫路径：static/images/totoro.gif -->
+    <div class="totoro">
+        <img src="{{ url_for('static', filename='images/totoro.gif') }}" width="80">
+    </div>
+    <footer>© 2018 HelloFlask</footer>
 </body>
 </html>

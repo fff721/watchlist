@@ -2,15 +2,31 @@
 
 {% block content %}
 <p>{{ movies|length }} Titles</p>
-<ul class="movie-list">
+
+<!-- 新增电影表单 -->
+<form method="post">
+    Name <input type="text" name="name" placeholder="电影名">
+    Year <input type="text" name="year" placeholder="年份" size="6">
+    <input type="submit" value="Add" class="btn">
+</form>
+
+<table>
     {% for movie in movies %}
-    <li>
-        {{ movie.title }} - {{ movie.year }}
-        <span class="float-right">
-            <!-- class="imdb" 匹配css黄色按钮 -->
-            <a class="imdb" target="_blank" href="https://www.imdb.com/find?q={{ movie.title }}">IMDb</a>
-        </span>
-    </li>
+    <tr>
+        <td>{{ movie.title }} - {{ movie.year }}</td>
+        <td style="text-align:right">
+            <!-- 编辑按钮：跳转到编辑页 -->
+            <a href="{{ url_for('edit', movie_id=movie.id) }}">
+                <button class="btn">Edit</button>
+            </a>
+            <!-- 删除按钮：POST提交删除 -->
+            <form style="display:inline;" method="post" action="{{ url_for('delete', movie_id=movie.id) }}">
+                <button class="btn" onclick="return confirm('确认删除？')">Delete</button>
+            </form>
+            <!-- IMDB黄色按钮仅展示，无跳转逻辑 -->
+            <button class="btn imdb-btn">IMDb</button>
+        </td>
+    </tr>
     {% endfor %}
-</ul>
+</table>
 {% endblock %}

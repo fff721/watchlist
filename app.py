@@ -1,69 +1,70 @@
-import os
-import click
-from flask import Flask
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+import os
 
-# 初始化Flask
 app = Flask(__name__)
-# 数据库配置
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(app.root_path, "data.db")
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-# 初始化数据库
+# 配置SQLite数据库
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.root_path, 'data.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# 数据模型
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20))
-
+# 数据库模型：电影表
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(60))
     year = db.Column(db.String(4))
 
-# 初始化数据库命令
-@app.cli.command()
-@click.option('--drop', is_flag=True)
-def initdb(drop):
-    if drop:
-        db.drop_all()
+# 初始化数据库+插入截图里的8条初始电影数据
+with app.app_context():
     db.create_all()
-    click.echo("数据库初始化完成")
+    # 判断是否已有数据，避免重复插入
+    if not Movie.query.first():
+        movies_init = [
+            Movie(title='My Neighbor Totoro', year='1988'),
+            Movie(title='Dead Poets Society', year='1989'),
+            Movie(title='A Perfect World', year='1993'),
+            Movie(title='Leon', year='1994'),
+            Movie(title='Mahjong', year='1996'),
+            Movie(title='King of Comedy', year='1999'),
+            Movie(title='Devils on the Doorstep', year='1999'),
+            Movie(title='The Pork of Music', year='2012')
+        ]
+        db.session.add_all(movies_init)
+        db.session.commit()
 
-# 填充测试数据命令
-@app.cli.command()
-def forge():
-    db.create_all()
-    name = 'Grey Li'
-    movies = [
-        {'title': 'My Neighbor Totoro', 'year': '1988'},
-        {'title': 'Dead Poets Society', 'year': '1989'},
-        {'title': 'A Perfect World', 'year': '1993'},
-        {'title': 'Leon', 'year': '1994'},
-        {'title': 'Mahjong', 'year': '1996'},
-        {'title': 'Swallowtail Butterfly', 'year': '1996'},
-        {'title': 'King of Comedy', 'year': '1999'},
-        {'title': 'Devils on the Doorstep', 'year': '1999'},
-        {'title': 'WALL-E', 'year': '2008'},
-        {'title': 'The Pork of Music', 'year': '2012'},
-    ]
-    user = User(name=name)
-    db.session.add(user)
-    for m in movies:
-        movie = Movie(title=m['title'], year=m['year'])
-        db.session.add(movie)
-    db.session.commit()
-    click.echo("测试数据生成完毕")
-
-# 首页路由（数据库数据渲染网页）
-@app.route('/')
+# 主页：展示列表、新增电影
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    user = User.query.first()
+    if request.method == 'POST':
+        # 获取新增表单数据
+        title = request.form.get('name')
+        year = request.form.get('year')
+        if title and year:
+            new_movie = Movie(title=title, year=year)
+            db.session.add(new_movie)
+            db.session.commit()
+        return redirect(url_for('index'))
     movies = Movie.query.all()
-    html = "用户名：" + user.name + "<br><br>电影列表：<br>"
-    for mov in movies:
-        html = html + mov.title + " — " + mov.year + "<br>"
-    return html
+    return render_template('index.html', movies=movies)
 
-if __name__ == "__main__":
+# 编辑电影页面 GET展示原有数据 / POST更新数据
+@app.route('/movie/edit/<int:movie_id>', methods=['GET', 'POST'])
+def edit(movie_id):
+    movie = Movie.query.get_or_404(movie_id)
+    if request.method == 'POST':
+        movie.title = request.form['name']
+        movie.year = request.form['year']
+        db.session.commit()
+        return redirect(url_for('index'))
+    return render_template('edit.html', movie=movie)
+
+# 删除电影接口
+@app.route('/movie/delete/<int:movie_id>', methods=['POST'])
+def delete(movie_id):
+    movie = Movie.query.get_or_404(movie_id)
+    db.session.delete(movie)
+    db.session.commit()
+    return redirect(url_for('index'))
+
+if __name__ == '__main__':
     app.run(debug=True)
